@@ -186,6 +186,7 @@
 		2567170A1725E31900AAF78F /* IntroLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 256717091725E31900AAF78F /* IntroLayer.mm */; };
 		2567170D1725E31900AAF78F /* GLES-Render.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2567170C1725E31900AAF78F /* GLES-Render.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		2567170F1725E31900AAF78F /* blocks.png in Resources */ = {isa = PBXBuildFile; fileRef = 2567170E1725E31900AAF78F /* blocks.png */; };
+		256717171725EC9700AAF78F /* GameLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 256717161725EC9600AAF78F /* GameLayer.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -564,6 +565,8 @@
 		2567170B1725E31900AAF78F /* GLES-Render.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GLES-Render.h"; sourceTree = "<group>"; };
 		2567170C1725E31900AAF78F /* GLES-Render.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "GLES-Render.mm"; sourceTree = "<group>"; };
 		2567170E1725E31900AAF78F /* blocks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = blocks.png; path = Resources/blocks.png; sourceTree = "<group>"; };
+		256717151725EC9600AAF78F /* GameLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameLayer.h; sourceTree = "<group>"; };
+		256717161725EC9600AAF78F /* GameLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GameLayer.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -626,6 +629,8 @@
 				256717031725E31900AAF78F /* AppDelegate.mm */,
 				256717051725E31900AAF78F /* HelloWorldLayer.h */,
 				256717061725E31900AAF78F /* HelloWorldLayer.mm */,
+				256717151725EC9600AAF78F /* GameLayer.h */,
+				256717161725EC9600AAF78F /* GameLayer.mm */,
 				256717081725E31900AAF78F /* IntroLayer.h */,
 				256717091725E31900AAF78F /* IntroLayer.mm */,
 				2567170B1725E31900AAF78F /* GLES-Render.h */,
@@ -1406,6 +1411,7 @@
 				256717071725E31900AAF78F /* HelloWorldLayer.mm in Sources */,
 				2567170A1725E31900AAF78F /* IntroLayer.mm in Sources */,
 				2567170D1725E31900AAF78F /* GLES-Render.mm in Sources */,
+				256717171725EC9700AAF78F /* GameLayer.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
