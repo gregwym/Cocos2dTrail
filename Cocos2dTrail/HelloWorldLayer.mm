@@ -96,7 +96,6 @@ enum {
 	delete m_debugDraw;
 	m_debugDraw = NULL;
 	
-	[super dealloc];
 }	
 
 -(void) createMenu
@@ -123,7 +122,6 @@ enum {
 		
 		[[app navController] presentModalViewController:achivementViewController animated:YES];
 		
-		[achivementViewController release];
 	}];
 	
 	// Leaderboard Menu Item using blocks
@@ -137,7 +135,6 @@ enum {
 		
 		[[app navController] presentModalViewController:leaderboardViewController animated:YES];
 		
-		[leaderboardViewController release];
 	}];
 	
 	CCMenu *menu = [CCMenu menuWithItems:itemAchievement, itemLeaderboard, reset, nil];
