@@ -187,6 +187,14 @@
 		2567170D1725E31900AAF78F /* GLES-Render.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2567170C1725E31900AAF78F /* GLES-Render.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		2567170F1725E31900AAF78F /* blocks.png in Resources */ = {isa = PBXBuildFile; fileRef = 2567170E1725E31900AAF78F /* blocks.png */; };
 		256717171725EC9700AAF78F /* GameLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 256717161725EC9600AAF78F /* GameLayer.mm */; };
+		256717221725F7DE00AAF78F /* hit.caf in Resources */ = {isa = PBXBuildFile; fileRef = 2567171B1725F7DE00AAF78F /* hit.caf */; };
+		256717231725F7DE00AAF78F /* meta_tiles.png in Resources */ = {isa = PBXBuildFile; fileRef = 2567171C1725F7DE00AAF78F /* meta_tiles.png */; };
+		256717241725F7DE00AAF78F /* move.caf in Resources */ = {isa = PBXBuildFile; fileRef = 2567171D1725F7DE00AAF78F /* move.caf */; };
+		256717251725F7DE00AAF78F /* pickup.caf in Resources */ = {isa = PBXBuildFile; fileRef = 2567171E1725F7DE00AAF78F /* pickup.caf */; };
+		256717261725F7DE00AAF78F /* Player.png in Resources */ = {isa = PBXBuildFile; fileRef = 2567171F1725F7DE00AAF78F /* Player.png */; };
+		256717271725F7DE00AAF78F /* TileMap.caf in Resources */ = {isa = PBXBuildFile; fileRef = 256717201725F7DE00AAF78F /* TileMap.caf */; };
+		256717281725F7DE00AAF78F /* tmw_desert_spacing.png in Resources */ = {isa = PBXBuildFile; fileRef = 256717211725F7DE00AAF78F /* tmw_desert_spacing.png */; };
+		256717301726011400AAF78F /* TileMap.tmx in Resources */ = {isa = PBXBuildFile; fileRef = 2567172F1726011400AAF78F /* TileMap.tmx */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -567,6 +575,14 @@
 		2567170E1725E31900AAF78F /* blocks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = blocks.png; path = Resources/blocks.png; sourceTree = "<group>"; };
 		256717151725EC9600AAF78F /* GameLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameLayer.h; sourceTree = "<group>"; };
 		256717161725EC9600AAF78F /* GameLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GameLayer.mm; sourceTree = "<group>"; };
+		2567171B1725F7DE00AAF78F /* hit.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = hit.caf; sourceTree = "<group>"; };
+		2567171C1725F7DE00AAF78F /* meta_tiles.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = meta_tiles.png; sourceTree = "<group>"; };
+		2567171D1725F7DE00AAF78F /* move.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = move.caf; sourceTree = "<group>"; };
+		2567171E1725F7DE00AAF78F /* pickup.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = pickup.caf; sourceTree = "<group>"; };
+		2567171F1725F7DE00AAF78F /* Player.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Player.png; sourceTree = "<group>"; };
+		256717201725F7DE00AAF78F /* TileMap.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = TileMap.caf; sourceTree = "<group>"; };
+		256717211725F7DE00AAF78F /* tmw_desert_spacing.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tmw_desert_spacing.png; sourceTree = "<group>"; };
+		2567172F1726011400AAF78F /* TileMap.tmx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = TileMap.tmx; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -645,6 +661,7 @@
 		256714E21725E31100AAF78F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2567171A1725F7DE00AAF78F /* TileGameResources */,
 				256714E31725E31100AAF78F /* Default.png */,
 				256714E51725E31100AAF78F /* Default@2x.png */,
 				256714E71725E31100AAF78F /* Default-568h@2x.png */,
@@ -1180,6 +1197,21 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		2567171A1725F7DE00AAF78F /* TileGameResources */ = {
+			isa = PBXGroup;
+			children = (
+				2567172F1726011400AAF78F /* TileMap.tmx */,
+				2567171B1725F7DE00AAF78F /* hit.caf */,
+				2567171C1725F7DE00AAF78F /* meta_tiles.png */,
+				2567171D1725F7DE00AAF78F /* move.caf */,
+				2567171E1725F7DE00AAF78F /* pickup.caf */,
+				2567171F1725F7DE00AAF78F /* Player.png */,
+				256717201725F7DE00AAF78F /* TileMap.caf */,
+				256717211725F7DE00AAF78F /* tmw_desert_spacing.png */,
+			);
+			path = TileGameResources;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1244,6 +1276,14 @@
 				256714F91725E31100AAF78F /* iTunesArtwork in Resources */,
 				2567164F1725E31700AAF78F /* ChangeLog in Resources */,
 				2567170F1725E31900AAF78F /* blocks.png in Resources */,
+				256717221725F7DE00AAF78F /* hit.caf in Resources */,
+				256717231725F7DE00AAF78F /* meta_tiles.png in Resources */,
+				256717241725F7DE00AAF78F /* move.caf in Resources */,
+				256717251725F7DE00AAF78F /* pickup.caf in Resources */,
+				256717261725F7DE00AAF78F /* Player.png in Resources */,
+				256717271725F7DE00AAF78F /* TileMap.caf in Resources */,
+				256717281725F7DE00AAF78F /* tmw_desert_spacing.png in Resources */,
+				256717301726011400AAF78F /* TileMap.tmx in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

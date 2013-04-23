@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="50" height="50" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="tmw_desert_spacing" tilewidth="32" tileheight="32" spacing="1" margin="1">
+  <image source="tmw_desert_spacing.png" trans="82ffa4" width="265" height="199"/>
+ </tileset>
+ <tileset firstgid="49" name="meta_tiles" tilewidth="32" tileheight="32" spacing="1" margin="1">
+  <image source="meta_tiles.png" trans="82ffa4" width="67" height="34"/>
+  <tile id="0">
+   <properties>
+    <property name="Collidable" value="Yes"/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="Collectable" value="Yes"/>
+    <property name="Collidable" value="No"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="Background" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJzt2WsLgjAUBuB1s/udSvoQi8Agqv//8zpDRzKOZrraJu+HB2ve9npOISwSQgwtGpGTAwuytGjlOEefHBiDkn3mcT7kKLr/mVxKzpcVr/PPHJLZz+XgjvMphx5Lsu2zQj18zKHmfTQ8yJ0Z17qk9yEHVz/b9iL9ncbZ99uXdmTqQT2qujJjqn7jgHPI3OeQc+S1IUdE5mSWbbkc0sK9fykR/DuNy3rUeWYqh/6vy4trXMu1pIDreTWpT1vhWQAAAAAAAAAAABTriPdameu5NKHWMyYiXdNwPZcm1mRDth7MpQ6zn0LtL7OfQu0vs59C7y8AG17P5Rwz
+  </data>
+ </layer>
+ <layer name="Foreground" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJzt0bEJwEAMBMHv5K//Kp06MB/JSDYzcJmCBa0F86Q74EGK75gp3QEftbsDiuzbTvJ+Som//KVSugM+KN0BHKU7YJB0BwAAAAAAADDCBVFxAbw=
+  </data>
+ </layer>
+ <objectgroup name="Objects" width="50" height="50" opacity="0.33">
+  <object name="SpawnPoint" type="spawn" x="32" y="192" width="32" height="32"/>
+  <object name="EnemySpawn2" type="EnemySpawn" x="704" y="288" width="32" height="32"/>
+  <object name="EnemySpawn1" type="EnemySpawn" x="320" y="512" width="32" height="32"/>
+  <object name="EventTriggerRemoveWall" type="EventTrigger" x="320" y="288" width="32" height="32">
+   <properties>
+    <property name="action" value="remove all wall2 tile on map"/>
+    <property name="name" value="removeWall"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <layer name="Meta" width="50" height="50" opacity="0.47">
+  <data encoding="base64" compression="zlib">
+   eJzt1EEKgDAMRNFeKb3/4USwECQ2EDHO4j8IClWZacExgH52zW5dTZQp6qGYPWLump2HInsx2Xc7fdWjg88yk+d27yqZbqK1xW73aj2WqMdTVuUekWpW9Y6K+SqZFHtUqf6DF6Usf2MvAAAAAAAAAAAAcDoA/H0OMQ==
+  </data>
+ </layer>
+</map>

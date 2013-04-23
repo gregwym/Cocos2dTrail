@@ -8,6 +8,15 @@
 
 #import "GameLayer.h"
 
+@interface GameLayer ()
+
+@property (strong) CCTMXTiledMap *tileMap;
+@property (strong) CCTMXLayer *background;
+@property (strong) CCSprite *player;
+@property (strong) CCTMXLayer *meta;
+
+@end
+
 @implementation GameLayer
 
 +(CCScene *) scene
@@ -25,93 +34,122 @@
 	return scene;
 }
 
-- (id) init
+-(id) init
 {
-    if ((self = [super initWithColor:ccc4(255,255,255,255)])) {
-        CGSize winSize = [CCDirector sharedDirector].winSize;
-        CCSprite *player = [CCSprite spriteWithFile:@"Icon.png"];
-        player.position = ccp(player.contentSize.width/2, winSize.height/2);
-        [self addChild:player];
+	if( (self=[super init]) ) {
 
-		[self schedule:@selector(addMonster) interval:1.0];
-		self.touchEnabled = TRUE;
+        self.tileMap = [CCTMXTiledMap tiledMapWithTMXFile:@"TileMap.tmx"];
+        self.background = [self.tileMap layerNamed:@"Background"];
+
+		self.meta = [self.tileMap layerNamed:@"Meta"];
+		self.meta.visible = NO;
+
+		CCTMXObjectGroup *objectGroup = [self.tileMap objectGroupNamed:@"Objects"];
+		NSAssert(objectGroup != nil, @"tile map has no objects object layer");
+
+		NSDictionary *spawnPoint = [objectGroup objectNamed:@"SpawnPoint"];
+		float x = [spawnPoint[@"x"] floatValue] + [spawnPoint[@"width"] floatValue] / 2;
+		float y = [spawnPoint[@"y"] floatValue] + [spawnPoint[@"height"] floatValue] / 2;
+
+
+		self.player = [CCSprite spriteWithFile:@"Player.png"];
+		self.player.position = ccp(x,y);
+
+		[self addChild:self.player];
+		[self setViewPointCenter:self.player.position];
+
+		self.touchEnabled = YES;
+
+		[self addChild:self.tileMap z:-1];
     }
     return self;
 }
 
-- (void) addMonster {
+- (void)setViewPointCenter:(CGPoint) position {
 
-    CCSprite * monster = [CCSprite spriteWithFile:@"Icon.png"];
-
-    // Determine where to spawn the monster along the Y axis
     CGSize winSize = [CCDirector sharedDirector].winSize;
-    int minY = monster.contentSize.height / 2;
-    int maxY = winSize.height - monster.contentSize.height/2;
-    int rangeY = maxY - minY;
-    int actualY = (arc4random() % rangeY) + minY;
 
-    // Create the monster slightly off-screen along the right edge,
-    // and along a random position along the Y axis as calculated above
-    monster.position = ccp(winSize.width + monster.contentSize.width/2, actualY);
-    [self addChild:monster];
+    int x = MAX(position.x, winSize.width/2);
+    int y = MAX(position.y, winSize.height/2);
+    x = MIN(x, (self.tileMap.mapSize.width * self.tileMap.tileSize.width) - winSize.width / 2);
+    y = MIN(y, (self.tileMap.mapSize.height * self.tileMap.tileSize.height) - winSize.height/2);
+    CGPoint actualPosition = ccp(x, y);
 
-    // Determine speed of the monster
-    int minDuration = 2.0;
-    int maxDuration = 4.0;
-    int rangeDuration = maxDuration - minDuration;
-    int actualDuration = (arc4random() % rangeDuration) + minDuration;
-
-    // Create the actions
-    CCMoveTo * actionMove = [CCMoveTo actionWithDuration:actualDuration
-												position:ccp(-monster.contentSize.width/2, actualY)];
-    CCCallBlockN * actionMoveDone = [CCCallBlockN actionWithBlock:^(CCNode *node) {
-        [node removeFromParentAndCleanup:YES];
-    }];
-    [monster runAction:[CCSequence actions:actionMove, actionMoveDone, nil]];
-	
+    CGPoint centerOfView = ccp(winSize.width/2, winSize.height/2);
+    CGPoint viewPoint = ccpSub(centerOfView, actualPosition);
+    self.position = viewPoint;
 }
 
-- (void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+#pragma mark - handle touches
+-(void)registerWithTouchDispatcher
+{
+    [[[CCDirector sharedDirector] touchDispatcher] addTargetedDelegate:self
+                                                              priority:0
+                                                       swallowsTouches:YES];
+}
 
-    // Choose one of the touches to work with
-    UITouch *touch = [touches anyObject];
-    CGPoint location = [self convertTouchToNodeSpace:touch];
+-(BOOL) ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event
+{
+	return YES;
+}
 
-    // Set up initial location of projectile
-    CGSize winSize = [[CCDirector sharedDirector] winSize];
-    CCSprite *projectile = [CCSprite spriteWithFile:@"blocks.png"];
-    projectile.position = ccp(20, winSize.height/2);
+-(void)setPlayerPosition:(CGPoint)position {
+	CGPoint tileCoord = [self tileCoordForPosition:position];
+	int tileGid = [_meta tileGIDAt:tileCoord];
+	if (tileGid) {
+		NSDictionary *properties = [_tileMap propertiesForGID:tileGid];
+		if (properties) {
+			NSString *collision = properties[@"Collidable"];
+			if (collision && [collision isEqualToString:@"Yes"]) {
+				return;
+			}
+		}
+	}
+//	self.player.position = position;
+	[self.player runAction:[CCMoveTo actionWithDuration:0.2f position:position]];
+}
 
-    // Determine offset of location to projectile
-    CGPoint offset = ccpSub(location, projectile.position);
+-(void)ccTouchEnded:(UITouch *)touch withEvent:(UIEvent *)event
+{
+    CGPoint touchLocation = [touch locationInView:touch.view];
+    touchLocation = [[CCDirector sharedDirector] convertToGL:touchLocation];
+    touchLocation = [self convertToNodeSpace:touchLocation];
 
-    // Bail out if you are shooting down or backwards
-    if (offset.x <= 0) return;
+    CGPoint playerPos = self.player.position;
+    CGPoint diff = ccpSub(touchLocation, playerPos);
 
-    // Ok to add now - we've double checked position
-    [self addChild:projectile];
+    if ( abs(diff.x) > abs(diff.y) ) {
+        if (diff.x > 0) {
+            playerPos.x += self.tileMap.tileSize.width;
+        } else {
+            playerPos.x -= self.tileMap.tileSize.width;
+        }
+    } else {
+        if (diff.y > 0) {
+            playerPos.y += self.tileMap.tileSize.height;
+        } else {
+            playerPos.y -= self.tileMap.tileSize.height;
+        }
+    }
 
-    int realX = winSize.width + (projectile.contentSize.width/2);
-    float ratio = (float) offset.y / (float) offset.x;
-    int realY = (realX * ratio) + projectile.position.y;
-    CGPoint realDest = ccp(realX, realY);
+    CCLOG(@"playerPos %@",CGPointCreateDictionaryRepresentation(playerPos));
 
-    // Determine the length of how far you're shooting
-    int offRealX = realX - projectile.position.x;
-    int offRealY = realY - projectile.position.y;
-    float length = sqrtf((offRealX*offRealX)+(offRealY*offRealY));
-    float velocity = 480/1; // 480pixels/1sec
-    float realMoveDuration = length/velocity;
+    // safety check on the bounds of the map
+    if (playerPos.x <= (self.tileMap.mapSize.width * self.tileMap.tileSize.width) &&
+        playerPos.y <= (self.tileMap.mapSize.height * self.tileMap.tileSize.height) &&
+        playerPos.y >= 0 &&
+        playerPos.x >= 0 )
+    {
+        [self setPlayerPosition:playerPos];
+    }
 
-    // Move projectile to actual endpoint
-    [projectile runAction:
-     [CCSequence actions:
-      [CCMoveTo actionWithDuration:realMoveDuration position:realDest],
-      [CCCallBlockN actionWithBlock:^(CCNode *node) {
-         [node removeFromParentAndCleanup:YES];
-	 }],
-      nil]];
+    [self setViewPointCenter:playerPos];
+}
 
+- (CGPoint)tileCoordForPosition:(CGPoint)position {
+    int x = position.x / _tileMap.tileSize.width;
+    int y = ((_tileMap.mapSize.height * _tileMap.tileSize.height) - position.y) / _tileMap.tileSize.height;
+    return ccp(x, y);
 }
 
 @end
