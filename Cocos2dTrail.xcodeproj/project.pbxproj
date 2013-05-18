@@ -195,6 +195,7 @@
 		256717271725F7DE00AAF78F /* TileMap.caf in Resources */ = {isa = PBXBuildFile; fileRef = 256717201725F7DE00AAF78F /* TileMap.caf */; };
 		256717281725F7DE00AAF78F /* tmw_desert_spacing.png in Resources */ = {isa = PBXBuildFile; fileRef = 256717211725F7DE00AAF78F /* tmw_desert_spacing.png */; };
 		256717301726011400AAF78F /* TileMap.tmx in Resources */ = {isa = PBXBuildFile; fileRef = 2567172F1726011400AAF78F /* TileMap.tmx */; };
+		2568C5591747E74B001B8844 /* Box2dLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2568C5581747E74B001B8844 /* Box2dLayer.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -583,6 +584,8 @@
 		256717201725F7DE00AAF78F /* TileMap.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = TileMap.caf; sourceTree = "<group>"; };
 		256717211725F7DE00AAF78F /* tmw_desert_spacing.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tmw_desert_spacing.png; sourceTree = "<group>"; };
 		2567172F1726011400AAF78F /* TileMap.tmx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = TileMap.tmx; sourceTree = "<group>"; };
+		2568C5571747E74B001B8844 /* Box2dLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Box2dLayer.h; sourceTree = "<group>"; };
+		2568C5581747E74B001B8844 /* Box2dLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Box2dLayer.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -649,6 +652,8 @@
 				256717161725EC9600AAF78F /* GameLayer.mm */,
 				256717081725E31900AAF78F /* IntroLayer.h */,
 				256717091725E31900AAF78F /* IntroLayer.mm */,
+				2568C5571747E74B001B8844 /* Box2dLayer.h */,
+				2568C5581747E74B001B8844 /* Box2dLayer.mm */,
 				2567170B1725E31900AAF78F /* GLES-Render.h */,
 				2567170C1725E31900AAF78F /* GLES-Render.mm */,
 				256714E21725E31100AAF78F /* Resources */,
@@ -1452,6 +1457,7 @@
 				2567170A1725E31900AAF78F /* IntroLayer.mm in Sources */,
 				2567170D1725E31900AAF78F /* GLES-Render.mm in Sources */,
 				256717171725EC9700AAF78F /* GameLayer.mm in Sources */,
+				2568C5591747E74B001B8844 /* Box2dLayer.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1571,6 +1577,7 @@
 				256717141725E31900AAF78F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
