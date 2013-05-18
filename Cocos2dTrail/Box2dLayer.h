@@ -8,13 +8,16 @@
 
 #import "cocos2d.h"
 #import "Box2D.h"
+#import "GLES-Render.h"
+
 
 #define PTM_RATIO 32.0
 
 @interface Box2dLayer : CCLayerColor {
 	b2World *_world;
 	b2Body *_body;
-	CCSprite *_ball;
+	CCSprite *_player;
+	GLESDebugDraw *_debugDraw;
 }
 
 + (id) scene;

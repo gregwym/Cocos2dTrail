@@ -10,6 +10,11 @@
 
 @interface Box2dLayer()
 
+@property (strong) CCTMXTiledMap *tileMap;
+@property (strong) CCTMXLayer *background;
+@property (strong) CCSprite *player;
+@property (strong) CCTMXLayer *meta;
+
 @end
 
 @implementation Box2dLayer
@@ -29,52 +34,118 @@
 	return scene;
 }
 
+// Helper: Position to Tile Coord (upper left, increments each tile)
+- (CGPoint)tileCoordForPosition:(CGPoint)position {
+    int x = position.x / _tileMap.tileSize.width;
+    int y = ((_tileMap.mapSize.height * _tileMap.tileSize.height) - position.y) / _tileMap.tileSize.height;
+    return CGPointMake(x, y);
+}
+
+- (CGPoint)positionForTileCoord:(CGPoint)coord {
+    int x = coord.x;
+    int y = ((_tileMap.mapSize.height * _tileMap.tileSize.height) - coord.y);
+    return CGPointMake(x, y);
+}
+
 - (id)init {
 	if ((self = [super init])) {
 		CGSize winSize = [CCDirector sharedDirector].winSize;
 
+		self.tileMap = [CCTMXTiledMap tiledMapWithTMXFile:@"Map.tmx"];
+        self.background = [self.tileMap layerNamed:@"Background"];
+
+		self.meta = [self.tileMap layerNamed:@"Meta"];
+		self.meta.visible = NO;
+		[self addChild:self.tileMap z:-1];
+
 		// Create sprite and add it to the layer
-		_ball = [CCSprite spriteWithFile:@"Player.png" rect:CGRectMake(0, 0, 52, 52)];
-		_ball.position = ccp(100, 300);
-		[self addChild:_ball];
+		_player = [CCSprite spriteWithFile:@"Player.png" rect:CGRectMake(0, 0, 52, 52)];
+		_player.position = ccp(480, 300);
+		[self addChild:_player];
 
 		// Create a world
 		b2Vec2 gravity = b2Vec2(0.0f, -8.0f);
 		_world = new b2World(gravity);
 
-		// Create ball body and shape
-		b2BodyDef ballBodyDef;
-		ballBodyDef.type = b2_dynamicBody;
-		ballBodyDef.position.Set(100/PTM_RATIO, 300/PTM_RATIO);
-		ballBodyDef.userData = (__bridge void *)_ball;
-		_body = _world->CreateBody(&ballBodyDef);
+		_debugDraw = new GLESDebugDraw(PTM_RATIO);
+        _world->SetDebugDraw(_debugDraw);
+		uint32 flags =0;
+        flags += b2Draw::e_shapeBit;
+//		flags += b2Draw::e_jointBit;
+//		flags += b2Draw::e_aabbBit;
+//		flags += b2Draw::e_pairBit;
+//		flags += b2Draw::e_centerOfMassBit;
+        _debugDraw->SetFlags(flags);
+
+		// Create player body and shape
+		b2BodyDef playerBodyDef;
+		playerBodyDef.type = b2_dynamicBody;
+		playerBodyDef.position.Set(480/PTM_RATIO, 300/PTM_RATIO);
+		playerBodyDef.userData = (__bridge void *)_player;
+		_body = _world->CreateBody(&playerBodyDef);
 
 		b2CircleShape circle;
 		circle.m_radius = 26.0/PTM_RATIO;
 
-		b2FixtureDef ballShapeDef;
-		ballShapeDef.shape = &circle;
-		ballShapeDef.density = 1.0f;
-		ballShapeDef.friction = 0.2f;
-		ballShapeDef.restitution = 0.8f;
-		_body->CreateFixture(&ballShapeDef);
+		b2FixtureDef playerShapeDef;
+		playerShapeDef.shape = &circle;
+		playerShapeDef.density = 1.0f;
+		playerShapeDef.friction = 0.2f;
+		playerShapeDef.restitution = 0.0f;
+		_body->CreateFixture(&playerShapeDef);
 
-		// Create edges around the entire screen
-		b2BodyDef groundBodyDef;
-		groundBodyDef.position.Set(0,0);
+		// Create edges according to the tile map
+		CCTMXObjectGroup *bodyObjects = [self.tileMap objectGroupNamed:@"BodyDef"];
+		CGFloat x, y;
+		int i;
+		for (NSDictionary *objPoint in [bodyObjects objects]) {
+			// Calculate the shape's origin point
+			x = [[objPoint valueForKey:@"x"] floatValue];
+			y = [[objPoint valueForKey:@"y"] floatValue];
+			CGPoint position = CGPointMake(x, y);
+			NSLog(@"Polygon origin at %f, %f", position.x, position.y);
 
-		b2Body *groundBody = _world->CreateBody(&groundBodyDef);
-		b2EdgeShape groundEdge;
-		b2FixtureDef boxShapeDef;
-		boxShapeDef.shape = &groundEdge;
+			// Draw edges according to the polygon
+			NSString *verticesString = [objPoint valueForKey:@"polygonPoints"];
+			NSArray *vertices = [verticesString componentsSeparatedByString:@" "];
 
-		//wall definitions
-		groundEdge.Set(b2Vec2(0,0), b2Vec2(winSize.width/PTM_RATIO, 0));
-		groundBody->CreateFixture(&boxShapeDef);
+			b2BodyDef groundBodyDef;
+			groundBodyDef.position.Set(position.x/PTM_RATIO, position.y/PTM_RATIO);
+			b2Body *groundBody = _world->CreateBody(&groundBodyDef);
+			b2PolygonShape groundPolygon;
+			b2FixtureDef groundFixtureDef;
+			groundFixtureDef.shape = &groundPolygon;
+			int numOfVertex = [vertices count];
+
+			b2Vec2 *polyVertices = new b2Vec2[numOfVertex];
+			i = 0;
+
+			for (NSString *vertex in vertices) {
+				NSArray *xy = [vertex componentsSeparatedByString:@","];
+				x = [[xy objectAtIndex:0] floatValue];
+				y = [[xy objectAtIndex:1] floatValue];
+//				NSLog(@"Offset: %f, %f", x, y);
+
+				polyVertices[i].x = x/PTM_RATIO;
+				polyVertices[i].y = (0.0f - y)/PTM_RATIO;
+//				NSLog(@"Coord: %f, %f", polyVertices[i].x, polyVertices[i].y);
+				i++;
+			}
+			groundPolygon.Set(polyVertices, numOfVertex);
+			delete [] polyVertices;
+
+			groundBody->CreateFixture(&groundFixtureDef);
+		}
 		
 		[self schedule:@selector(tick:) interval:0.02f];
 	}
 	return self;
+}
+
+-(void) draw{
+	[super draw];
+
+	_world->DrawDebugData();
 }
 
 - (void)tick:(ccTime) dt {

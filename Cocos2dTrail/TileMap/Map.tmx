@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="30" height="20" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="sprite" tilewidth="32" tileheight="32">
+  <image source="sprite.png" trans="82ffa4" width="320" height="320"/>
+ </tileset>
+ <tileset firstgid="101" name="meta" tilewidth="32" tileheight="32">
+  <image source="meta.png" trans="82ffa4" width="96" height="32"/>
+  <tile id="0">
+   <properties>
+    <property name="Collidable" value="Yes"/>
+    <property name="Color" value="Green"/>
+    <property name="Slope" value="Positive"/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="Collidable" value="YES"/>
+    <property name="Color" value="Red"/>
+   </properties>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="Collidable" value="YES"/>
+    <property name="Color" value="Blue"/>
+    <property name="Slope" value="Negative"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="Background" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzd1clOwzAQBuBhldhpyT1hldKySd2AQ0mhh7LlwNoD+/s/BL9VW5pObceEG4dPTZN0/tjxuAkRbcIWbMMO7MIe9JkpmIYZcb6sRNTk2Ql7piVYhhX9TPkf1UTNAzgUmXIelOEvzMIczLNzvvo8xzjWqgW+mVVYg3V2To23DvtsrEeiRsTyzrRFreJQ89RWdZrQgjZ04AROLXUindcXNRYcuU1PbVWnC+eQQQ8u4NJRS2XnOldmy7F3PbXVsw/gCq7hBm7hzjN/kc4zz+8a+8BTOyf3unDlVsR9HZFt7rmn8XX8BM/wQqP17KsfoufIfaXxdfwBn/BFo/Vs3k3Zz4zs6zEhf4/G7Lo5jsVvYoFfy8i+Hov6KNXX+V7JM/g7itn9dZ2pbFjmv6iPGvo63ytThr+jlN3f8mSG9JFtnhuMyZDffZkhfcTnjR+bjLREpukj5QEeabKP5Jj4O6laMtsBmaaPlDd4p8k+8v2nyD0iZE+x7S1la/wnP3/kWk4=
+  </data>
+ </layer>
+ <layer name="Foreground" width="30" height="20" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFxAB2Apga5o6CoQvISRejcT/ywGh8Dz1Ay/giVKeQW9fQqr4aBaQBACCnAS4=
+  </data>
+ </layer>
+ <layer name="Tools" width="30" height="20" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFlAJxCvWLArEYNRwyCgYMiA60A0bBkAESA+2AUTDoAXp9MFo/DE0AAEDFAJw=
+  </data>
+ </layer>
+ <objectgroup name="Objects" width="30" height="20" visible="0">
+  <object name="SpawnPoint" type="spawnpoint" x="32" y="512">
+   <properties>
+    <property name="Name" value="Player"/>
+   </properties>
+  </object>
+  <object name="Exit" type="gateway" x="896" y="512">
+   <properties>
+    <property name="Name" value="Exit"/>
+   </properties>
+  </object>
+  <object name="Spring" type="tools" x="192" y="512"/>
+  <object name="Spring" type="tools" x="352" y="512"/>
+  <object name="Copter" type="tools" x="608" y="352"/>
+  <object name="Jetpack" type="tools" x="672" y="64"/>
+  <object name="Spring" type="tools" x="256" y="96"/>
+  <object name="Cannon" type="tools" x="224" y="96"/>
+  <object name="Cannon" type="tools" x="0" y="224">
+   <properties>
+    <property name="Name" value="Cannon"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <layer name="Meta" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzt0zEOACAIA8B+Fv3/D9yNiCCgA0060ktMBCo/pwn12O0P3ZW98z1dje3tcvZ8o9m3lNsrNzaZLkF+hwgz2yXku4Q4l7ufTYt7+4+qZx1/vV04
+  </data>
+ </layer>
+ <objectgroup name="BodyDef" width="30" height="20">
+  <object x="192" y="128">
+   <polygon points="0,0 0,128 224,128 96,0"/>
+  </object>
+  <object x="0" y="256">
+   <polygon points="0,0 0,96 512,96 512,0"/>
+  </object>
+  <object x="448" y="96">
+   <polygon points="0,0 0,64 192,160 256,160 256,0"/>
+  </object>
+  <object x="640" y="256">
+   <polygon points="0,0 0,288 64,288 64,0"/>
+  </object>
+  <object x="640" y="384">
+   <polygon points="0,0 -64,0 -224,160 0,160"/>
+  </object>
+  <object x="960" y="544">
+   <polygon points="0,0 -960,0 -960,96 0,96"/>
+  </object>
+  <object x="256" y="544">
+   <polygon points="0,0 0,-32 -32,-32 -32,0"/>
+  </object>
+ </objectgroup>
+</map>
