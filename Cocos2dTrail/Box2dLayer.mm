@@ -91,7 +91,7 @@
 		playerShapeDef.shape = &circle;
 		playerShapeDef.density = 1.0f;
 		playerShapeDef.friction = 0.2f;
-		playerShapeDef.restitution = 0.0f;
+		playerShapeDef.restitution = 0.5f;
 		_body->CreateFixture(&playerShapeDef);
 
 		// Create edges according to the tile map
@@ -148,15 +148,32 @@
 	_world->DrawDebugData();
 }
 
+- (void)setViewPointCenter:(CGPoint) position {
+
+    CGSize winSize = [CCDirector sharedDirector].winSize;
+
+    int x = MAX(position.x, winSize.width/2);
+    int y = MAX(position.y, winSize.height/2);
+    x = MIN(x, (self.tileMap.mapSize.width * self.tileMap.tileSize.width) - winSize.width / 2);
+    y = MIN(y, (self.tileMap.mapSize.height * self.tileMap.tileSize.height) - winSize.height/2);
+    CGPoint actualPosition = ccp(x, y);
+
+    CGPoint centerOfView = ccp(winSize.width/2, winSize.height/2);
+    CGPoint viewPoint = ccpSub(centerOfView, actualPosition);
+    self.position = viewPoint;
+}
+
 - (void)tick:(ccTime) dt {
 
     _world->Step(dt, 10, 10);
     for(b2Body *b = _world->GetBodyList(); b; b=b->GetNext()) {
         if (b->GetUserData() != NULL) {
             CCSprite *ballData = (__bridge CCSprite *)b->GetUserData();
-            ballData.position = ccp(b->GetPosition().x * PTM_RATIO,
-                                    b->GetPosition().y * PTM_RATIO);
+			CGPoint position = CGPointMake(b->GetPosition().x * PTM_RATIO,
+										   b->GetPosition().y * PTM_RATIO);
+            ballData.position = position;
             ballData.rotation = -1 * CC_RADIANS_TO_DEGREES(b->GetAngle());
+			[self setViewPointCenter:position];
         }
     }
 
