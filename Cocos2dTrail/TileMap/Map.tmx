@@ -91,5 +91,11 @@
   <object x="256" y="544">
    <polygon points="0,0 0,-32 -32,-32 -32,0"/>
   </object>
+  <object x="0" y="0">
+    <polyline points="0,0 0,640"/>
+  </object>
+  <object x="960" y="0">
+    <polyline points="0,0 0,640"/>
+  </object>
  </objectgroup>
 </map>

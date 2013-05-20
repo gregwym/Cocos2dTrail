@@ -35,19 +35,80 @@
 }
 
 // Helper: Position to Tile Coord (upper left, increments each tile)
-- (CGPoint)tileCoordForPosition:(CGPoint)position {
+- (CGPoint)tileCoordForPosition:(CGPoint)position
+{
     int x = position.x / _tileMap.tileSize.width;
     int y = ((_tileMap.mapSize.height * _tileMap.tileSize.height) - position.y) / _tileMap.tileSize.height;
     return CGPointMake(x, y);
 }
 
-- (CGPoint)positionForTileCoord:(CGPoint)coord {
+- (CGPoint)positionForTileCoord:(CGPoint)coord
+{
     int x = coord.x;
     int y = ((_tileMap.mapSize.height * _tileMap.tileSize.height) - coord.y);
     return CGPointMake(x, y);
 }
 
-- (id)init {
+- (void)addPolygon:(NSString *)polyCoords toBody:(b2Body *)body
+{
+	NSArray *vertices = [polyCoords componentsSeparatedByString:@" "];
+
+	b2PolygonShape groundPolygon;
+	b2FixtureDef groundFixtureDef;
+	groundFixtureDef.shape = &groundPolygon;
+	int numOfVertex = [vertices count];
+
+	b2Vec2 *polyVertices = new b2Vec2[numOfVertex];
+	int i = 0;
+
+	for (NSString *vertex in vertices) {
+		NSArray *xy = [vertex componentsSeparatedByString:@","];
+		CGFloat x = [[xy objectAtIndex:0] floatValue];
+		CGFloat y = [[xy objectAtIndex:1] floatValue];
+		// NSLog(@"Offset: %f, %f", x, y);
+
+		polyVertices[i].x = x/PTM_RATIO;
+		polyVertices[i].y = (0.0f - y)/PTM_RATIO;
+		// NSLog(@"Coord: %f, %f", polyVertices[i].x, polyVertices[i].y);
+		i++;
+	}
+	groundPolygon.Set(polyVertices, numOfVertex);
+	delete [] polyVertices;
+
+	body->CreateFixture(&groundFixtureDef);
+}
+
+- (void)addPolyline:(NSString *)polyCoords toBody:(b2Body *)body
+{
+	NSArray *vertices = [polyCoords componentsSeparatedByString:@" "];
+
+	b2EdgeShape groundEdge;
+	b2FixtureDef groundFixtureDef;
+	groundFixtureDef.shape = &groundEdge;
+	int numOfVertex = [vertices count];
+
+	b2Vec2 *polyVertices = new b2Vec2[numOfVertex];
+	int i = 0;
+
+	for (NSString *vertex in vertices) {
+		NSArray *xy = [vertex componentsSeparatedByString:@","];
+		CGFloat x = [[xy objectAtIndex:0] floatValue];
+		CGFloat y = [[xy objectAtIndex:1] floatValue];
+		// NSLog(@"Offset: %f, %f", x, y);
+
+		polyVertices[i].x = x/PTM_RATIO;
+		polyVertices[i].y = (0.0f - y)/PTM_RATIO;
+		// NSLog(@"Coord: %f, %f", polyVertices[i].x, polyVertices[i].y);
+		i++;
+	}
+	groundEdge.Set(polyVertices[0], polyVertices[1]);
+	delete [] polyVertices;
+
+	body->CreateFixture(&groundFixtureDef);
+}
+
+- (id)init
+{
 	if ((self = [super init])) {
 		CGSize winSize = [CCDirector sharedDirector].winSize;
 
@@ -64,7 +125,7 @@
 		[self addChild:_player];
 
 		// Create a world
-		b2Vec2 gravity = b2Vec2(0.0f, -8.0f);
+		b2Vec2 gravity = b2Vec2(0.0f, -9.8f);
 		_world = new b2World(gravity);
 
 		_debugDraw = new GLESDebugDraw(PTM_RATIO);
@@ -82,6 +143,7 @@
 		playerBodyDef.type = b2_dynamicBody;
 		playerBodyDef.position.Set(480/PTM_RATIO, 300/PTM_RATIO);
 		playerBodyDef.userData = (__bridge void *)_player;
+		playerBodyDef.linearDamping = 0.1f;
 		_body = _world->CreateBody(&playerBodyDef);
 
 		b2CircleShape circle;
@@ -91,50 +153,32 @@
 		playerShapeDef.shape = &circle;
 		playerShapeDef.density = 1.0f;
 		playerShapeDef.friction = 0.2f;
-		playerShapeDef.restitution = 0.5f;
+		playerShapeDef.restitution = 0.8f;
 		_body->CreateFixture(&playerShapeDef);
 
 		// Create edges according to the tile map
 		CCTMXObjectGroup *bodyObjects = [self.tileMap objectGroupNamed:@"BodyDef"];
 		CGFloat x, y;
-		int i;
 		for (NSDictionary *objPoint in [bodyObjects objects]) {
-			// Calculate the shape's origin point
+			// Calculate ground body origin point
 			x = [[objPoint valueForKey:@"x"] floatValue];
 			y = [[objPoint valueForKey:@"y"] floatValue];
 			CGPoint position = CGPointMake(x, y);
-			NSLog(@"Polygon origin at %f, %f", position.x, position.y);
+			NSLog(@"Poly origin at %f, %f", position.x, position.y);
 
-			// Draw edges according to the polygon
-			NSString *verticesString = [objPoint valueForKey:@"polygonPoints"];
-			NSArray *vertices = [verticesString componentsSeparatedByString:@" "];
-
+			// Create ground body def
 			b2BodyDef groundBodyDef;
 			groundBodyDef.position.Set(position.x/PTM_RATIO, position.y/PTM_RATIO);
 			b2Body *groundBody = _world->CreateBody(&groundBodyDef);
-			b2PolygonShape groundPolygon;
-			b2FixtureDef groundFixtureDef;
-			groundFixtureDef.shape = &groundPolygon;
-			int numOfVertex = [vertices count];
 
-			b2Vec2 *polyVertices = new b2Vec2[numOfVertex];
-			i = 0;
-
-			for (NSString *vertex in vertices) {
-				NSArray *xy = [vertex componentsSeparatedByString:@","];
-				x = [[xy objectAtIndex:0] floatValue];
-				y = [[xy objectAtIndex:1] floatValue];
-//				NSLog(@"Offset: %f, %f", x, y);
-
-				polyVertices[i].x = x/PTM_RATIO;
-				polyVertices[i].y = (0.0f - y)/PTM_RATIO;
-//				NSLog(@"Coord: %f, %f", polyVertices[i].x, polyVertices[i].y);
-				i++;
+			// Draw edges according to the polygon/polyline
+			NSString *verticesString = [objPoint valueForKey:@"polygonPoints"];
+			if (verticesString == NULL) {
+				verticesString = [objPoint valueForKey:@"polylinePoints"];
+				[self addPolyline:verticesString toBody:groundBody];
+			} else {
+				[self addPolygon:verticesString toBody:groundBody];
 			}
-			groundPolygon.Set(polyVertices, numOfVertex);
-			delete [] polyVertices;
-
-			groundBody->CreateFixture(&groundFixtureDef);
 		}
 		
 		[self schedule:@selector(tick:) interval:0.02f];
