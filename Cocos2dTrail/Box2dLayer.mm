@@ -12,8 +12,9 @@
 
 @property (strong) CCTMXTiledMap *tileMap;
 @property (strong) CCTMXLayer *background;
-@property (strong) CCSprite *player;
 @property (strong) CCTMXLayer *meta;
+
+@property CGPoint touchStartPoint;
 
 @end
 
@@ -114,6 +115,7 @@
 
 		self.tileMap = [CCTMXTiledMap tiledMapWithTMXFile:@"Map.tmx"];
         self.background = [self.tileMap layerNamed:@"Background"];
+		self.touchEnabled = YES;
 
 		self.meta = [self.tileMap layerNamed:@"Meta"];
 		self.meta.visible = NO;
@@ -121,13 +123,14 @@
 
 		// Create sprite and add it to the layer
 		_player = [CCSprite spriteWithFile:@"Player.png" rect:CGRectMake(0, 0, 52, 52)];
-		_player.position = ccp(480, 300);
+		_player.position = ccp(400, 640);
 		[self addChild:_player];
 
 		// Create a world
 		b2Vec2 gravity = b2Vec2(0.0f, -9.8f);
 		_world = new b2World(gravity);
 
+		// Enable debug layer
 		_debugDraw = new GLESDebugDraw(PTM_RATIO);
         _world->SetDebugDraw(_debugDraw);
 		uint32 flags =0;
@@ -141,7 +144,7 @@
 		// Create player body and shape
 		b2BodyDef playerBodyDef;
 		playerBodyDef.type = b2_dynamicBody;
-		playerBodyDef.position.Set(480/PTM_RATIO, 300/PTM_RATIO);
+		playerBodyDef.position.Set(400/PTM_RATIO, 640/PTM_RATIO);
 		playerBodyDef.userData = (__bridge void *)_player;
 		playerBodyDef.linearDamping = 0.1f;
 		_body = _world->CreateBody(&playerBodyDef);
@@ -180,7 +183,8 @@
 				[self addPolygon:verticesString toBody:groundBody];
 			}
 		}
-		
+
+		// Start the world
 		[self schedule:@selector(tick:) interval:0.02f];
 	}
 	return self;
@@ -221,6 +225,51 @@
         }
     }
 
+}
+
+- (void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	UITouch *touch = [touches anyObject];
+	self.touchStartPoint = [touch locationInView:touch.view];
+}
+
+- (void)ccTouchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+{
+
+}
+
+- (void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	UITouch *touch = [touches anyObject];
+
+	CGPoint endPoint = [touch locationInView:touch.view];
+
+	CGPoint diff = ccpSub(endPoint, self.touchStartPoint);
+//	CGPoint force = ccp(diff.x, 0.0f - diff.y);
+
+	_body->ApplyForceToCenter(b2Vec2(diff.x, 0.0f - diff.y));
+
+//    if ( abs(diff.x) > abs(diff.y) ) {
+//		// Horizontal move
+//        if (diff.x > 0) {
+//			// Rightwards
+//        } else {
+//			// Leftwards
+//        }
+//    } else {
+//		// Vertical Move
+//        if (diff.y > 0) {
+//			// Downwards
+//        } else {
+//            // Upwards
+//			_body->ApplyForceToCenter(b2Vec2(0, 1000));
+//        }
+//    }
+}
+
+- (void)ccTouchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	
 }
 
 @end
